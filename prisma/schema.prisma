@@ -1,32 +1,13 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
     provider = "postgresql"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
-}
-
-// Necessary for Next auth
+// Existing models for authentication
 model Account {
     id                       String  @id @default(cuid())
     userId                   String
@@ -62,7 +43,9 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    posts         Post[]
+    projects      Project[]
+    teamMemberships TeamMember[]
+    ownedProjects Project[]  @relation("ProjectOwner")
 }
 
 model VerificationToken {
@@ -71,4 +54,58 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+// New models for task management
+model Category {
+    id       String    @id @default(cuid())
+    name     String
+    projects Project[]
+}
+
+model Project {
+    id          String   @id @default(cuid())
+    name        String
+    description String?
+    categoryId  String
+    category    Category @relation(fields: [categoryId], references: [id])
+    tasks       Task[]
+    teamMembers TeamMember[]
+    ownerId     String
+    owner       User     @relation("ProjectOwner", fields: [ownerId], references: [id])
+
+    User User[]
+}
+
+model Task {
+    id          String   @id @default(cuid())
+    title       String
+    description String?
+    priority    Priority
+    deadline    DateTime
+    projectId   String
+    project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model TeamMember {
+    id        String  @id @default(cuid())
+    userId    String
+    user      User    @relation(fields: [userId], references: [id])
+    projectId String
+    project   Project @relation(fields: [projectId], references: [id])
+    role      Role
+
+    @@unique([userId, projectId])
+}
+
+enum Priority {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+enum Role {
+    VIEWER
+    EDITOR
+    ADMIN
 }

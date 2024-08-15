@@ -1,14 +1,11 @@
 // import Link from "next/link";
 
 // import { LatestPost } from "~/app/_components/post";
-// import { getServerAuthSession } from "~/server/auth";
-// import { api, HydrateClient } from "~/trpc/server";
+import { getServerAuthSession } from "~/server/auth";
+import { api, HydrateClient } from "~/trpc/server";
 
 // export default async function Home() {
-//   const hello = await api.post.hello({ text: "from tRPC" });
-//   const session = await getServerAuthSession();
 
-//   void api.post.getLatest.prefetch();
 
 //   return (
 //     <HydrateClient>
@@ -77,7 +74,14 @@ import { ModeToggle } from "~/components/mode-toggle";
 
 
 
-export default function HomePage() {
+
+
+export default async function HomePage() {
+  void api.post.getLatest.prefetch();
+  const hello = await api.post.hello({ text: "Vinay"});
+  const session = await getServerAuthSession();
+  console.log(hello)
+  console.log(session)
   return (
     <div className="flex flex-col min-h-screen">
       <header className="z-[50] sticky top-0 w-full bg-background/95 border-b backdrop-blur-sm dark:bg-black/[0.6] border-border/40">
@@ -109,7 +113,7 @@ export default function HomePage() {
         <div className="container relative pb-10">
           <section className="mx-auto flex max-w-[980px] flex-col items-center gap-2 py-8 md:py-12 md:pb-8 lg:py-24 lg:pb-6">
             <h1 className="text-center text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
-              Unlock Your Productivity Today! 
+              Unlock Your Productivity Today!
             </h1>
             <span className="max-w-[750px] text-center text-lg font-light text-foreground">
               A stunning and functional retractable sidebar for Next.js using
@@ -118,7 +122,7 @@ export default function HomePage() {
             <div className="flex w-full items-center justify-center space-x-4 py-4 md:pb-6">
               <Button variant="default" size={"lg"} asChild>
                 <Link href="/dashboard">
-                   Let's get started
+                  Let's get started
                   <ArrowRightIcon className="ml-2" />
                 </Link>
               </Button>

@@ -8,7 +8,6 @@ import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { ModeToggle } from "~/components/mode-toggle";
 import Link from "next/link";
 import { PanelsTopLeft } from "lucide-react";
-import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +29,7 @@ export default function Component() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const result = await signIn("credentials", {
-        redirect: false,
+        redirect:false,
         email: data.email,
         password: data.password,
       });

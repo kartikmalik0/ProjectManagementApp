@@ -7,29 +7,22 @@ export default withAuth(
     const isAuth = !!req.nextauth.token;
 
     // Redirect authenticated users away from login
-    if (pathname === "/login") {
-      if (isAuth) {
-        return NextResponse.redirect(new URL("/dashboard", req.url));
-      }
-      return NextResponse.next();
+    if (isAuth && pathname === "/login") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
-    // Protect dashboard route
-    if (pathname.startsWith("/dashboard")) {
-      if (isAuth) {
-        return NextResponse.next();
-      }
+    // Redirect unauthenticated users trying to access the dashboard
+    if (!isAuth && pathname.startsWith("/dashboard")) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    // Allow all other requests to pass through
     return NextResponse.next();
   },
   {
     callbacks: {
       authorized: ({ token }) => !!token,
     },
-  }
+  },
 );
 
 export const config = {

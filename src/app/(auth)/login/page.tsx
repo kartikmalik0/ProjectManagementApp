@@ -14,13 +14,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { loginSchema } from "~/utils/formSchema/login";
+import {  toast } from 'sonner'
 
 
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Component() {
-  const { register, handleSubmit, formState: { errors , isSubmitting } } = useForm<LoginFormData>({
+  const { register, handleSubmit,reset, formState: { errors , isSubmitting } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
@@ -35,12 +36,14 @@ export default function Component() {
       });
 
       if (result?.error) {
-        console.error("Login error:", result.error);
+        toast.error("Incorrect email and password")
+        
       } else {
+        toast.success("Login Successfull")
         router.push("/");
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Login error:");
     } 
   };
 

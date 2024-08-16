@@ -91,6 +91,9 @@ export const authOptions: NextAuthOptions = {
     },
   },
   session: { strategy: "jwt" },
+  pages:{
+    signIn:"/login"
+  }
 };
 
 export const getServerAuthSession = () => getServerSession(authOptions);

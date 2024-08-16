@@ -13,6 +13,8 @@ import { PanelsTopLeft } from "lucide-react";
 import { registerSchema } from "~/utils/formSchema/register";
 import { registerUser } from "~/actions/register";
 import { useRouter } from "next/navigation";
+import {  toast } from 'sonner'
+
 
 
 
@@ -35,12 +37,13 @@ export default function Component() {
         try {
             await registerUser(data)
             reset()
+            toast.success("Registeration Successfull")
             router.push("/login")
         } catch (error: any) {
             if (error.message === "User with this email already exists") {
-                console.log("Email Already Exists")
+                toast.error("Email Already Exists")
             } else {
-                console.log("Unable to create user")
+                toast.error("Unable to create user")
             }
         }
     };

@@ -30,7 +30,6 @@ export const verifyUserRouter = createTRPCRouter({
         input.password,
         user.password,
       );
-      console.log(isPasswordValid, "passowrd vlaid -----------")
       if (!isPasswordValid) {
         throw new Error("Invalid password");
       }

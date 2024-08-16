@@ -38,4 +38,26 @@ export const postRouter = createTRPCRouter({
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
+
+  registerUser: publicProcedure
+  .input(z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+    name: z.string().min(1),
+  }))
+  .mutation(async ({ ctx, input }) => {
+    // Here you can use a hashing library like bcrypt to hash the password
+    // For example:
+    // const hashedPassword = await bcrypt.hash(input.password, 10);
+
+    const user = await ctx.db.user.create({
+      data: {
+        email: input.email,
+        password: input.password, // Make sure to hash this in a real application
+        
+      },
+    });
+
+    return user;
+  }),
 });

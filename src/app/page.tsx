@@ -77,10 +77,8 @@ import { ModeToggle } from "~/components/mode-toggle";
 
 
 export default async function HomePage() {
-  void api.post.getLatest.prefetch();
-  const hello = await api.post.hello({ text: "Vinay"});
+  console.log("hello-----------------------------------")
   const session = await getServerAuthSession();
-  console.log(hello)
   console.log(session)
   return (
     <div className="flex flex-col min-h-screen">

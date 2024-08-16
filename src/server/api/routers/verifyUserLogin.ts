@@ -4,7 +4,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { verifyPassword } from "~/utils/password"; // Assumes you have a utility function to compare passwords
+import { verifyPassword } from "~/utils/password"; 
 
 export const verifyUserRouter = createTRPCRouter({
   getUserByEmailAndPassword: publicProcedure

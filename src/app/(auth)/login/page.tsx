@@ -36,13 +36,11 @@ export default function Component() {
 
       if (result?.error) {
         console.error("Login error:", result.error);
-        // Handle login error (e.g., show error message to user)
       } else {
-        router.push("/dashboard");
+        router.push("/");
       }
     } catch (error) {
       console.error("Login error:", error);
-      // Handle login error (e.g., show error message to user)
     } 
   };
 

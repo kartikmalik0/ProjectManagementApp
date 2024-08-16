@@ -22,16 +22,6 @@ declare module "next-auth" {
 }
 
 export const authOptions: NextAuthOptions = {
-  callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
-  },
-  adapter: PrismaAdapter(db) as Adapter,
   providers: [
     Credentials({
       // name: "Credentials",
@@ -53,11 +43,14 @@ export const authOptions: NextAuthOptions = {
           const email = credentials.email;
           const password = credentials.password;
           // Call the TRPC route to get the user by email
-          const user = await api.verifyUser.getUserByEmailAndPassword({email,password})
+          const user = await api.verifyUser.getUserByEmailAndPassword({
+            email,
+            password,
+          });
           // const user = await db.user.findUnique({
           //   where: { email: credentials.email },
           // });
-          console.log(user)
+          console.log(user);
           if (!user) {
             throw new Error("User not found");
           }
@@ -76,6 +69,28 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  adapter: PrismaAdapter(db) as Adapter,
+
+  callbacks: {
+    jwt: ({ token, user }) => {
+      console.log("JWT Callback - Token:", token, "User:", user);
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    session: ({ session, token }) => {
+      console.log("Session Callback - Session:", session, "Token:", token);
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id as string,
+        },
+      };
+    },
+  },
+  session: { strategy: "jwt" },
 };
 
 export const getServerAuthSession = () => getServerSession(authOptions);

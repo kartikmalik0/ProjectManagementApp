@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
-import { Progress } from "../ui/progress";
-import { Badge } from "../ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
+import { Progress } from "../../ui/progress";
+import { Badge } from "../../ui/badge";
+import ActionDropDown from "./ActionDropDown";
 
 
 export default function AllProjects() {
@@ -12,7 +13,8 @@ export default function AllProjects() {
     <Card className="rounded-lg border-none mt-6">
       <CardContent className="p-6">
         <div className="grid gap-8 min-h-[calc(100vh-56px-64px-20px-24px-56px-48px)] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <Card className="h-fit w-full">
+          <Card className="h-fit w-full relative">
+            <ActionDropDown />
             <CardHeader>
               <CardTitle className="flex gap-2 items-center ">
                 <Button

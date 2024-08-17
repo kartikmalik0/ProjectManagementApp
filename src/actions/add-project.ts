@@ -1,5 +1,6 @@
 "use server";
 
+import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
 export async function addProject({
@@ -9,11 +10,18 @@ export async function addProject({
   name: string;
   categoryIds: string[];
 }) {
-    
+  const session = await getServerAuthSession();
+  if(!session){
+    throw new Error("Unauthorized")
+  }
   try {
-    const res = await api.project.createProject({ name, categoryIds, ownerId:"clzx0fb7w0000hb3y79ya0axu" });
-    return res
+    const res = await api.project.createProject({
+      name,
+      categoryIds,
+      ownerId: session.user.id,
+    });
+    return res;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }

@@ -50,11 +50,8 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface AddProjectProps {
-  session: Session | null;
-}
 
-export function AddProject({ session }: AddProjectProps) {
+export function AddProject() {
   const [open, setOpen] = useState(false);
   const { data: categories } = useQuery({
     queryKey: ["fetchCategory"],
@@ -70,7 +67,7 @@ export function AddProject({ session }: AddProjectProps) {
       category: [],
     },
   });
-
+  const { isSubmitting } = form.formState
   const onSubmit = async (data: FormValues) => {
     const categoryIds = data.category.map((cat) => cat.id);
 
@@ -150,7 +147,9 @@ export function AddProject({ session }: AddProjectProps) {
               )}
             />
             <DialogFooter>
-              <Button type="submit">Save Project</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                Add Project
+              </Button>
             </DialogFooter>
           </form>
         </Form>

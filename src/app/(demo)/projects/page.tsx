@@ -16,7 +16,6 @@ import { getServerAuthSession } from "~/server/auth";
 
 
 export default async function PostsPage() {
-  const session = await getServerAuthSession()
   return (
     <ContentLayout title="All Projects">
       <div className="flex items-center justify-between">
@@ -39,7 +38,7 @@ export default async function PostsPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <AddProject session={session } />
+        <AddProject />
       </div>
       <AllProjects />
     </ContentLayout>

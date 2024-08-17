@@ -6,9 +6,9 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        categoryIds: z.array(z.string()), 
-        ownerId: z.string(), 
-      })
+        categoryIds: z.array(z.string()),
+        ownerId: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const project = await ctx.db.project.create({
@@ -22,11 +22,10 @@ export const projectRouter = createTRPCRouter({
           },
         },
         include: {
-          categories: true, 
-          owner: true, 
+          categories: true,
+          owner: true,
         },
       });
-
       return project;
     }),
 });

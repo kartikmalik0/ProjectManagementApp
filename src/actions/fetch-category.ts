@@ -1,14 +1,13 @@
-"use server";
 
 "use server";
 
-import { api } from "~/trpc/server";
+import { db } from "~/server/db";
 
 export async function fetchCategory() {
   try {
-    const data = await api.createCategory.fetchCategories();
+    const data = await db.category.findMany()
     return data;
-  } catch (error) {
-    throw new Error("Unable to fetch Category");
+  } catch (error:any) {
+    throw new Error("Unable to fetch Category", error.message);
   }
 }

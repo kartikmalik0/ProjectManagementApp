@@ -1,4 +1,3 @@
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 
 import { ContentLayout } from "~/components/admin-panel/content-layout";
@@ -11,12 +10,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "~/components/ui/breadcrumb";
+import { getServerAuthSession } from "~/server/auth";
 
 
 
 
 export default async function PostsPage() {
-  const session = await getServerSession()
+  const session = await getServerAuthSession()
   return (
     <ContentLayout title="All Projects">
       <div className="flex items-center justify-between">

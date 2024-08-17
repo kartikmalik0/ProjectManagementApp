@@ -50,7 +50,6 @@ export const authOptions: NextAuthOptions = {
           // const user = await db.user.findUnique({
           //   where: { email: credentials.email },
           // });
-          console.log(user);
           if (!user) {
             throw new Error("User not found");
           }
@@ -73,27 +72,26 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     jwt: ({ token, user }) => {
-      console.log("JWT Callback - Token:", token, "User:", user);
       if (user) {
         token.id = user.id;
       }
       return token;
     },
     session: ({ session, token }) => {
-      console.log("Session Callback - Session:", session, "Token:", token);
+      console.log("Token:", token);
       return {
         ...session,
         user: {
           ...session.user,
-          id: token.id as string,
+          id: token.sub,
         },
       };
     },
   },
   session: { strategy: "jwt" },
-  pages:{
-    signIn:"/login"
-  }
+  pages: {
+    signIn: "/login",
+  },
 };
 
 export const getServerAuthSession = () => getServerSession(authOptions);

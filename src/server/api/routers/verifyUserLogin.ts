@@ -16,7 +16,6 @@ export const verifyUserRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       // Find the user by email
-      console.log(input)
       const user = await ctx.db.user.findUnique({
         where: { email: input.email },
       });

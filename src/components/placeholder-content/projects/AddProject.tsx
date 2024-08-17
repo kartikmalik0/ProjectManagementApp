@@ -1,5 +1,4 @@
 "use client";
-
 import { Plus } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
@@ -20,14 +19,13 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from "~/components/ui/Multiselect";
-import { useEffect, useReducer, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import {
   Form,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -35,13 +33,19 @@ import {
 } from "~/components/ui/form";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCategory } from "~/actions/fetch-category";
-import { getSession, useSession } from "next-auth/react";
-import { getServerAuthSession } from "~/server/auth";
-import { getServerSession, Session } from "next-auth";
 
+import { Session } from "next-auth";
+import { addProject } from "~/actions/add-project";
+
+// Updated form schema to include category objects with id and name
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  category: z.array(z.string()).min(1, "Please select at least one category"),
+  category: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+    })
+  ).min(1, "Please select at least one category"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -50,19 +54,15 @@ interface AddProjectProps {
   session: Session | null;
 }
 
-
-export function AddProject(session: AddProjectProps) {
-
-
-const sss = useSession()
-console.log(sss)
+export function AddProject({ session }: AddProjectProps) {
   const [open, setOpen] = useState(false);
-  const { data: category } = useQuery({
+  const { data: categories } = useQuery({
     queryKey: ["fetchCategory"],
     queryFn: async () => {
-      return await fetchCategory()
-    }
-  })
+      return await fetchCategory();
+    },
+  });
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -71,10 +71,22 @@ console.log(sss)
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    toast.success("Form submitted: " + JSON.stringify(data, null, 2));
+  const onSubmit = async (data: FormValues) => {
+    const categoryIds = data.category.map((cat) => cat.id);
+
+    try {
+      await addProject({ categoryIds, name: data.name });
+      form.reset()
+      toast.success("Project Added");
+    } catch (error) {
+      toast.error("Unable to add Project")
+    }
+    // Show a success message
+
+    // Close the dialog
     setOpen(false);
   };
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -111,25 +123,28 @@ console.log(sss)
                 <FormItem>
                   <FormLabel>Category</FormLabel>
                   <MultiSelector
-                    onValuesChange={field.onChange}
-                    values={field.value}
+                    onValuesChange={(selectedValues) => {
+                      const selectedCategories = categories
+                        ?.filter((cat) => selectedValues.includes(cat.name))
+                        .map((cat) => ({ id: cat.id, name: cat.name }));
+                      field.onChange(selectedCategories);
+                    }}
+                    values={field.value.map((cat) => cat.name)}
                   >
                     <MultiSelectorTrigger>
                       <MultiSelectorInput placeholder="Select Category" />
                     </MultiSelectorTrigger>
                     <MultiSelectorContent>
                       <MultiSelectorList>
-                        {category && category.map((cat) => (
-                          <MultiSelectorItem key={cat.name} value={cat.name}>
-                            {cat.name}
-                          </MultiSelectorItem>
-                        ))}
+                        {categories &&
+                          categories.map((cat) => (
+                            <MultiSelectorItem key={cat.id} value={cat.name}>
+                              {cat.name}
+                            </MultiSelectorItem>
+                          ))}
                       </MultiSelectorList>
                     </MultiSelectorContent>
                   </MultiSelector>
-                  <FormDescription>
-                    Select the Category for project project
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

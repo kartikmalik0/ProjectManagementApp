@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ContentLayout } from "~/components/admin-panel/content-layout";
-import PlaceholderContent from "~/components/placeholder-content/placeholder-content";
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "~/components/ui/breadcrumb";
 
@@ -21,7 +20,7 @@ export default function DashboardPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <PlaceholderContent />
+      {/* <PlaceholderContent /> */}
     </ContentLayout>
   );
 }

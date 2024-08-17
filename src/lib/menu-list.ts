@@ -46,20 +46,20 @@ export function getMenuList(pathname: string): Group[] {
       menus: [
         {
           href: "",
-          label: "Posts",
-          active: pathname.includes("/posts"),
+          label: "Projects",
+          active: pathname.includes("/projects"),
           icon: SquarePen,
           submenus: [
             {
-              href: "/posts",
-              label: "All Posts",
-              active: pathname === "/posts"
+              href: "/projects",
+              label: "All Projects",
+              active: pathname === "/projects"
             },
-            {
-              href: "/posts/new",
-              label: "New Post",
-              active: pathname === "/posts/new"
-            }
+            // {
+            //   href: "/posts/new",
+            //   label: "New Post",
+            //   active: pathname === "/posts/new"
+            // }
           ]
         },
         {
@@ -69,13 +69,13 @@ export function getMenuList(pathname: string): Group[] {
           icon: Bookmark,
           submenus: []
         },
-        {
-          href: "/tags",
-          label: "Tags",
-          active: pathname.includes("/tags"),
-          icon: Tag,
-          submenus: []
-        }
+        // {
+        //   href: "/team",
+        //   label: "Team",
+        //   active: pathname.includes("/team"),
+        //   icon: Team,
+        //   submenus: []
+        // }
       ]
     },
     {

@@ -1,15 +1,17 @@
 import Link from "next/link";
 
-import PlaceholderContent from "@/components/demo/placeholder-content";
-import { ContentLayout } from "@/components/admin-panel/content-layout";
+import { ContentLayout } from "~/components/admin-panel/content-layout";
+import AllProjects from "~/components/placeholder-content/AllProjects";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
+  Breadcrumb, BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator
-} from "@/components/ui/breadcrumb";
+} from "~/components/ui/breadcrumb";
+
+
+
 
 export default function PostsPage() {
   return (
@@ -33,7 +35,7 @@ export default function PostsPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <PlaceholderContent />
+      <AllProjects />
     </ContentLayout>
   );
 }

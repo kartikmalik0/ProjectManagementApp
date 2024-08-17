@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
 export const categoryRouter = createTRPCRouter({
   addCategory: publicProcedure
@@ -18,4 +18,12 @@ export const categoryRouter = createTRPCRouter({
 
       return category;
     }),
+
+
+    fetchCategories: protectedProcedure.query(async ({ ctx }) => {
+      const categories = await ctx.db.category.findMany();
+      return categories;
+    }),
+  
+
 });

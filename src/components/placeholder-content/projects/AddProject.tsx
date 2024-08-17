@@ -12,7 +12,6 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -21,7 +20,7 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from "~/components/ui/Multiselect";
-import { useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -34,23 +33,36 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCategory } from "~/actions/fetch-category";
+import { getSession, useSession } from "next-auth/react";
+import { getServerAuthSession } from "~/server/auth";
+import { getServerSession, Session } from "next-auth";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  category: z.array(z.string()).min(1, "Please select at least one framework"),
+  category: z.array(z.string()).min(1, "Please select at least one category"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-const category = [
-  { name: "React" },
-  { name: "Vue" },
-  { name: "Svelte" },
-];
+interface AddProjectProps {
+  session: Session | null;
+}
 
-export function AddProject() {
+
+export function AddProject(session: AddProjectProps) {
+
+
+const sss = useSession()
+console.log(sss)
   const [open, setOpen] = useState(false);
-
+  const { data: category } = useQuery({
+    queryKey: ["fetchCategory"],
+    queryFn: async () => {
+      return await fetchCategory()
+    }
+  })
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -107,7 +119,7 @@ export function AddProject() {
                     </MultiSelectorTrigger>
                     <MultiSelectorContent>
                       <MultiSelectorList>
-                        {category.map((cat) => (
+                        {category && category.map((cat) => (
                           <MultiSelectorItem key={cat.name} value={cat.name}>
                             {cat.name}
                           </MultiSelectorItem>

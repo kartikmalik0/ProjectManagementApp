@@ -65,24 +65,24 @@ model User {
 
 // New models for task management
 model Category {
-    id       String    @id @default(cuid())
-    name     String
-    projects Project[]
+  id        String    @id @default(cuid())
+  name      String
+  projects  Project[] @relation("ProjectCategories")
 }
+
 
 model Project {
-    id          String   @id @default(cuid())
-    name        String
-    description String?
-    categoryId  String
-    category    Category @relation(fields: [categoryId], references: [id])
-    tasks       Task[]
-    teamMembers TeamMember[]
-    ownerId     String
-    owner       User     @relation("ProjectOwner", fields: [ownerId], references: [id])
-
-    User User[]
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  categories  Category[] @relation("ProjectCategories") // Relation field to categories
+  tasks       Task[]
+  teamMembers TeamMember[]
+  ownerId     String
+  owner       User     @relation("ProjectOwner", fields: [ownerId], references: [id])
+  User        User[]
 }
+
 
 model Task {
     id          String   @id @default(cuid())

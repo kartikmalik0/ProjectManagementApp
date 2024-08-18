@@ -15,12 +15,13 @@ export interface Project {
 interface ProjectContextType {
   projects: Project[];
   setProjects: (projects: Project[] | ((prevProjects: Project[]) => Project[])) => void;
+
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 const ProjectProvider = ({ children }: { children: ReactNode }) => {
-  const [projects, setProjects] = useState<Project[]>([]); // Blank state
+  const [projects, setProjects] = useState<Project[]>([]);
 
   return (
     <ProjectContext.Provider value={{ projects, setProjects }}>

@@ -11,6 +11,7 @@ import {
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { useProject } from "~/providers/project-context"
+import { EditProject } from "./EditProject"
 
 const ActionDropDown = ({ projectId }: { projectId: string }) => {
     const { setProjects } = useProject()
@@ -25,12 +26,7 @@ const ActionDropDown = ({ projectId }: { projectId: string }) => {
                 <DropdownMenuContent className="w-56">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuCheckboxItem
-                    // checked={showStatusBar}
-                    // onCheckedChange={setShowStatusBar}
-                    >
-                        Edit
-                    </DropdownMenuCheckboxItem>
+                    
                     <DropdownMenuCheckboxItem
                         // checked={showActivityBar}
                         // onCheckedChange={setShowActivityBar}

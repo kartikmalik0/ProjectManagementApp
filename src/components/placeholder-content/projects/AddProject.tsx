@@ -53,7 +53,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export function AddProject({ projects }: AddProjectProps) {
-  const { setProjects } = useProject();
+  const { setProjects, projects: contextProjects } = useProject();
   const [open, setOpen] = useState(false);
 
   // Fetch categories

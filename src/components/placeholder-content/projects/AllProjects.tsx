@@ -7,6 +7,7 @@ import { Progress } from "../../ui/progress";
 import { Badge } from "../../ui/badge";
 import ActionDropDown from "./ActionDropDown";
 import { useProject } from "~/providers/project-context";
+import { EditProject } from "./EditProject";
 
 export default function AllProjects() {
   const { projects } = useProject();
@@ -36,10 +37,13 @@ export default function AllProjects() {
                   <p>Progress</p>
                   <Progress value={33} className="h-2" />
                 </CardContent>
-                <CardFooter className="flex flex-wrap gap-2">
-                  {project.categories.map((category) => (
-                    <Badge key={category.id} variant="outline">{category.name}</Badge>
-                  ))}
+                <CardFooter className="flex flex-col ">
+                  <div className="flex-wrap w-full flex gap-2">
+                    {project.categories.map((category) => (
+                      <Badge key={category.id} variant="outline">{category.name}</Badge>
+                    ))}
+                  </div>
+                  <EditProject projectId={project.id} />
                 </CardFooter>
               </Card>
             ))}

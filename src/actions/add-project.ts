@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
@@ -23,5 +24,7 @@ export async function addProject({
     return res;
   } catch (error) {
     console.log(error);
+  }finally{
+    revalidatePath("/projects")
   }
 }

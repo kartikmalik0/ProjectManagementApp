@@ -1,6 +1,7 @@
 
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
 
 export async function fetchCategory() {
@@ -9,5 +10,7 @@ export async function fetchCategory() {
     return data;
   } catch (error:any) {
     throw new Error("Unable to fetch Category", error.message);
+  }finally{
+    revalidatePath("/projects")
   }
 }

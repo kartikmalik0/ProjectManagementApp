@@ -22,7 +22,5 @@ export async function fetchProject() {
     return res;
   } catch (error) {
     throw new Error("Unable to fetch Projects");
-  }finally{
-    revalidatePath("/projects")
   }
 }

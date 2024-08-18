@@ -23,7 +23,7 @@ export const projectRouter = createTRPCRouter({
         },
         include: {
           categories: true,
-          owner: true,
+          tasks: true,
         },
       });
       return project;

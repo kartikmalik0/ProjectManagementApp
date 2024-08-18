@@ -19,7 +19,7 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from "~/components/ui/Multiselect";
-import { useState } from "react";
+import {  useEffect, useState, useTransition } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -33,11 +33,13 @@ import {
 } from "~/components/ui/form";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCategory } from "~/actions/fetch-category";
-
-import { Session } from "next-auth";
 import { addProject } from "~/actions/add-project";
+import { Project, useProject } from "~/providers/project-context";
 
-// Updated form schema to include category objects with id and name
+interface AddProjectProps {
+  projects: Project[];
+}
+// Define form schema
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   category: z.array(
@@ -50,15 +52,22 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-
-export function AddProject() {
+export function AddProject({ projects }: AddProjectProps) {
+  const { setProjects, projects: contextProjects } = useProject();
   const [open, setOpen] = useState(false);
+
+  // Fetch categories
   const { data: categories } = useQuery({
     queryKey: ["fetchCategory"],
     queryFn: async () => {
       return await fetchCategory();
     },
   });
+
+  useEffect(() => {
+    setProjects(projects)
+  }, [])
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -67,24 +76,29 @@ export function AddProject() {
       category: [],
     },
   });
-  const { isSubmitting } = form.formState
+
+  const { isSubmitting } = form.formState;
+
+  // Handle form submission
   const onSubmit = async (data: FormValues) => {
     const categoryIds = data.category.map((cat) => cat.id);
 
+    // Apply optimistic update
+
+
     try {
-      await addProject({ categoryIds, name: data.name });
-      form.reset()
+      const newProject = await addProject({ categoryIds, name: data.name });
+      if (newProject) {
+        setProjects((prevProjects) => [...prevProjects, newProject]);
+      }
+      form.reset();
       toast.success("Project Added");
     } catch (error) {
-      toast.error("Unable to add Project")
+      toast.error("Unable to add Project");
     }
-    // Show a success message
-
-    // Close the dialog
     setOpen(false);
   };
-
-
+  console.log(contextProjects)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

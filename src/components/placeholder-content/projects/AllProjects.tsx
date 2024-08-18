@@ -6,25 +6,11 @@ import { Button } from "../../ui/button";
 import { Progress } from "../../ui/progress";
 import { Badge } from "../../ui/badge";
 import ActionDropDown from "./ActionDropDown";
-import { fetchProject } from "~/actions/fetch-projects";
-import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
-import Loader from "~/components/Loader";
+import { useProject } from "~/providers/project-context";
 
 export default function AllProjects() {
-  const { data: projects, isLoading } = useQuery({
-    queryKey: ["project"],
-    queryFn: async () => {
-      try {
-        return await fetchProject();
-      } catch (error) {
-        toast.error("Unable to fetch projects");
-        throw error; // Re-throw to handle loading state correctly
-      }
-    },
-  });
+  const { projects } = useProject()
 
-  if (isLoading) return <Loader />;
 
   return (
     <Card className="rounded-lg border-none mt-6">

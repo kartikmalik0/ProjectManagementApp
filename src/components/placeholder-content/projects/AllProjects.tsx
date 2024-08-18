@@ -8,9 +8,11 @@ import { Badge } from "../../ui/badge";
 import ActionDropDown from "./ActionDropDown";
 import { useProject } from "~/providers/project-context";
 import { EditProject } from "./EditProject";
+import { Trash } from "lucide-react";
+import { deleteProject } from "~/actions/delete-project";
 
 export default function AllProjects() {
-  const { projects } = useProject();
+  const { projects, setProjects } = useProject();
 
   return (
     <Card className="rounded-lg border-none mt-6">
@@ -21,7 +23,7 @@ export default function AllProjects() {
           <div className="grid gap-8 min-h-[calc(100vh-56px-64px-20px-24px-56px-48px)] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {projects && projects.map((project) => (
               <Card key={project.id} className="h-fit w-full relative">
-                <ActionDropDown projectId={project.id} />
+                {/* <ActionDropDown projectId={project.id} /> */}
                 <CardHeader>
                   <CardTitle className="flex gap-2 items-center">
                     <Button variant="outline" className="relative h-8 w-8 rounded-full">
@@ -37,14 +39,22 @@ export default function AllProjects() {
                   <p>Progress</p>
                   <Progress value={33} className="h-2" />
                 </CardContent>
-                <CardFooter className="flex flex-col ">
-                  <div className="flex-wrap w-full flex gap-2">
-                    {project.categories.map((category) => (
-                      <Badge key={category.id} variant="outline">{category.name}</Badge>
-                    ))}
-                  </div>
-                  <EditProject projectId={project.id} />
+                <CardFooter className="flex flex-wrap gap-2">
+                  {project.categories.map((category) => (
+                    <Badge key={category.id} variant="outline">{category.name}</Badge>
+                  ))}
                 </CardFooter>
+                <div className="w-full flex justify-end p-2">
+                  <EditProject projectId={project.id} />
+                  <Button
+                    onClick={async () => {
+                      await deleteProject(project.id)
+                      setProjects((prevProjects) => prevProjects.filter(pro => pro.id !== project.id));
+                    }}
+                    variant={"ghost"}>
+                    <Trash className="text-red-500" />
+                  </Button>
+                </div>
               </Card>
             ))}
           </div>

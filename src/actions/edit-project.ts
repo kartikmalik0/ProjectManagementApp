@@ -15,7 +15,7 @@ export async function updateProject(id: string, data: {
         name: data.name,
         description: data.description,
         categories: {
-          set: data.categories,
+          set: data.categories?.map(cat => ({ id: cat.id })) || [],
         },
       },
       include: {

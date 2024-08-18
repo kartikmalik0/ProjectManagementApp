@@ -1,51 +1,39 @@
 "use client";
-import { Edit } from "lucide-react";
-import { Button } from "~/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { useEffect, useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-    Form,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "~/components/ui/form";
-import {
-    MultiSelector,
-    MultiSelectorContent,
-    MultiSelectorInput,
-    MultiSelectorItem,
-    MultiSelectorList,
-    MultiSelectorTrigger,
-  } from "~/components/ui/Multiselect";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
+import { Form, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
+import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorItem, MultiSelectorList, MultiSelectorTrigger } from "~/components/ui/Multiselect";
 import { Project, useProject } from "~/providers/project-context";
 import { updateProject } from "~/actions/edit-project";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCategory } from "~/actions/fetch-category";
+import { Edit } from "lucide-react";
 
-// Define the form schema
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  category: z.array(z.object({ id: z.string(), name: z.string() })),
+    name: z.string().min(1, "Name is required"),
+    category: z.array(z.object({ id: z.string(), name: z.string() })),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-// Server action for updating project (to be implemented)
-
-
 export function EditProject({ projectId }: { projectId: string }) {
+
+
+    const { data: categories } = useQuery({
+        queryKey: ["fetchCategoryforedit"],
+        queryFn: async () => {
+            return await fetchCategory();
+        },
+    });
+
+
     const [open, setOpen] = useState(false);
     const { setProjects, projects } = useProject();
     const project = projects.find(p => p.id === projectId);
@@ -54,7 +42,7 @@ export function EditProject({ projectId }: { projectId: string }) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: project?.name || "",
-            category: project?.categories || [],
+            category: project?.categories.map(cat => ({ id: cat.id, name: cat.name })) || [],
         },
     });
 
@@ -62,7 +50,7 @@ export function EditProject({ projectId }: { projectId: string }) {
         if (project) {
             form.reset({
                 name: project.name,
-                category: project.categories,
+                category: project.categories.map(cat => ({ id: cat.id, name: cat.name })),
             });
         }
     }, [project, form]);
@@ -72,7 +60,11 @@ export function EditProject({ projectId }: { projectId: string }) {
     const onSubmit = async (data: FormValues) => {
         try {
             if (project) {
-                const updatedProject = await updateProject(project.id, data);
+                const updatedProject = await updateProject(project.id, {
+                    name: data.name,
+                    description: project.description, // Keep the existing description if not updated
+                    categories: data.category.map(cat => ({ id: cat.id })),
+                });
                 if (updatedProject) {
                     setProjects((prevProjects) =>
                         prevProjects.map((proj) =>
@@ -91,8 +83,9 @@ export function EditProject({ projectId }: { projectId: string }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button type="button" onClick={() => setOpen(true)}>
-                    Edit
+                <Button type="button" className="" variant={"ghost"} onClick={() => setOpen(true)}>
+                    <Edit />
+                    
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -123,9 +116,8 @@ export function EditProject({ projectId }: { projectId: string }) {
                                     <FormLabel>Category</FormLabel>
                                     <MultiSelector
                                         onValuesChange={(selectedValues) => {
-                                            const selectedCategories = projects
-                                                .flatMap(p => p.categories)
-                                                .filter((cat) => selectedValues.includes(cat.name))
+                                            const selectedCategories = categories
+                                                ?.filter((cat) => selectedValues.includes(cat.name))
                                                 .map((cat) => ({ id: cat.id, name: cat.name }));
                                             field.onChange(selectedCategories);
                                         }}
@@ -136,11 +128,12 @@ export function EditProject({ projectId }: { projectId: string }) {
                                         </MultiSelectorTrigger>
                                         <MultiSelectorContent>
                                             <MultiSelectorList>
-                                                {projects.flatMap(p => p.categories).map((cat) => (
-                                                    <MultiSelectorItem key={cat.id} value={cat.name}>
-                                                        {cat.name}
-                                                    </MultiSelectorItem>
-                                                ))}
+                                                {categories &&
+                                                    categories.map((cat) => (
+                                                        <MultiSelectorItem key={cat.id} value={cat.name}>
+                                                            {cat.name}
+                                                        </MultiSelectorItem>
+                                                    ))}
                                             </MultiSelectorList>
                                         </MultiSelectorContent>
                                     </MultiSelector>

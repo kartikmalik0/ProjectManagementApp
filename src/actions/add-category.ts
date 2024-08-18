@@ -17,6 +17,6 @@ export async function addCategory(name: string) {
   } catch (error: any) {
     throw new Error(`Unable to create Category: ${error.message}`);
   } finally {
-    revalidatePath("/category");
+    revalidatePath("/projects");
   }
 }

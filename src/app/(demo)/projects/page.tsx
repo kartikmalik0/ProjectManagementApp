@@ -12,7 +12,6 @@ import {
   BreadcrumbSeparator
 } from "~/components/ui/breadcrumb";
 import { ProjectProvider } from "~/providers/project-context";
-import { getServerAuthSession } from "~/server/auth";
 
 
 

@@ -9,8 +9,7 @@ import ActionDropDown from "./ActionDropDown";
 import { useProject } from "~/providers/project-context";
 
 export default function AllProjects() {
-  const { projects } = useProject()
-
+  const { projects } = useProject();
 
   return (
     <Card className="rounded-lg border-none mt-6">
@@ -21,7 +20,7 @@ export default function AllProjects() {
           <div className="grid gap-8 min-h-[calc(100vh-56px-64px-20px-24px-56px-48px)] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {projects && projects.map((project) => (
               <Card key={project.id} className="h-fit w-full relative">
-                <ActionDropDown />
+                <ActionDropDown projectId={project.id} />
                 <CardHeader>
                   <CardTitle className="flex gap-2 items-center">
                     <Button variant="outline" className="relative h-8 w-8 rounded-full">
@@ -38,8 +37,9 @@ export default function AllProjects() {
                   <Progress value={33} className="h-2" />
                 </CardContent>
                 <CardFooter className="flex flex-wrap gap-2">
-                  <Badge variant="outline">Web Development</Badge>
-                  <Badge variant="outline">Study</Badge>
+                  {project.categories.map((category) => (
+                    <Badge key={category.id} variant="outline">{category.name}</Badge>
+                  ))}
                 </CardFooter>
               </Card>
             ))}

@@ -1,4 +1,6 @@
+"use client"
 import { EllipsisVertical } from "lucide-react"
+import { deleteProject } from "~/actions/delete-project"
 import { Button } from "~/components/ui/button"
 import {
     DropdownMenu,
@@ -8,8 +10,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
+import { useProject } from "~/providers/project-context"
 
-const ActionDropDown = () => {
+const ActionDropDown = ({ projectId }: { projectId: string }) => {
+    const { setProjects } = useProject()
     return (
         <div className=" absolute right-1 top-[7.5px]">
             <DropdownMenu>
@@ -25,11 +29,15 @@ const ActionDropDown = () => {
                     // checked={showStatusBar}
                     // onCheckedChange={setShowStatusBar}
                     >
-                       Edit
+                        Edit
                     </DropdownMenuCheckboxItem>
                     <DropdownMenuCheckboxItem
                         // checked={showActivityBar}
                         // onCheckedChange={setShowActivityBar}
+                        onClick={async () => {
+                            await deleteProject(projectId)
+                            setProjects((prevProjects) => prevProjects.filter(project => project.id !== projectId));
+                        }}
                         className="text-red-500"
                     >
                         Delete

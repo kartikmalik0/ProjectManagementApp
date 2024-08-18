@@ -1,5 +1,4 @@
 "use client";
-
 import { Plus } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
@@ -12,7 +11,7 @@ import {
     DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -24,17 +23,21 @@ import {
     FormLabel,
     FormMessage,
 } from "~/components/ui/form";
+import { Category, useCategory } from "~/providers/category-context";
 import { addCategory } from "~/actions/add-category";
 
-const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-});
 
-type FormValues = z.infer<typeof formSchema>;
 
-export function AddCategory() {
+export function AddCategory({ categoreis }: { categoreis: Category[] }) {
+
+    const formSchema = z.object({
+        name: z.string().min(1, "Name is required"),
+    });
+
+    type FormValues = z.infer<typeof formSchema>;
+
     const [open, setOpen] = useState(false);
-
+    const { setCategories } = useCategory()
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -42,19 +45,27 @@ export function AddCategory() {
         },
     });
 
+    useEffect(() => {
+        setCategories(categoreis)
+    }, [])
+
     const { isSubmitting } = form.formState;
 
 
     const onSubmit = async (data: FormValues) => {
         try {
-            await addCategory(data.name)
+            const newCategory = await addCategory(data.name)
+            if (newCategory) {
+                setCategories((prevCategories) => [...prevCategories, newCategory]);
+            }
             toast.success("Category Added")
             form.reset()
         } catch (error: any) {
             if (error.message === "Unable to create Category") {
                 toast.error("Unable to create Category")
-            } 
+            }
         }
+        setOpen(false)
     };
 
     return (

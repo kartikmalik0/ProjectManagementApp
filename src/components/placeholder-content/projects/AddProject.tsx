@@ -53,7 +53,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export function AddProject({ projects }: AddProjectProps) {
-  const { setProjects, projects: contextProjects } = useProject();
+  const { setProjects } = useProject();
   const [open, setOpen] = useState(false);
 
   // Fetch categories
@@ -83,8 +83,6 @@ export function AddProject({ projects }: AddProjectProps) {
   const onSubmit = async (data: FormValues) => {
     const categoryIds = data.category.map((cat) => cat.id);
 
-    // Apply optimistic update
-
 
     try {
       const newProject = await addProject({ categoryIds, name: data.name });
@@ -98,7 +96,6 @@ export function AddProject({ projects }: AddProjectProps) {
     }
     setOpen(false);
   };
-  console.log(contextProjects)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
